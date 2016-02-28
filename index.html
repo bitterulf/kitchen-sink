@@ -23,20 +23,34 @@
         };
 
         canvasElement.onclick = function(event) {
-          var puv = {
-            u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
-            v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset
-          };
-          var pxy = sheetengine.transforms.inverseTransformPoint({
-            u:puv.u + sheetengine.scene.center.u,
-            v:puv.v + sheetengine.scene.center.v
-          });
+          var coordsFromEvent = function(event) {
+            var puv = {
+              u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
+              v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset
+            };
+            var pxy = sheetengine.transforms.inverseTransformPoint({
+              u:puv.u + sheetengine.scene.center.u,
+              v:puv.v + sheetengine.scene.center.v
+            });
 
-          if (pxy.x > sheet.centerp.x - sheet.width / 2
-             && pxy.x < sheet.centerp.x + sheet.width / 2
-             && pxy.y > sheet.centerp.y - sheet.height / 2
-             && pxy.y < sheet.centerp.y + sheet.height / 2) {
-            console.log(puv, pxy, sheet.centerp, sheetengine.drawing.getPointuv(sheet.centerp));
+            return pxy;
+          };
+
+          var overlap = function(obj, coords) {
+            if (coords.x > obj.centerp.x - obj.width / 2
+               && coords.x < obj.centerp.x + obj.width / 2
+               && coords.y > obj.centerp.y - obj.height / 2
+               && coords.y < obj.centerp.y + obj.height / 2) {
+              return true;
+            }
+            return false;
+          };
+
+          var pxy = coordsFromEvent(event);
+          console.log(pxy);
+
+          if (overlap(sheet, pxy)) {
+            console.log(pxy, sheetengine.drawing.getPointuv(sheet.centerp));
           }
         }
 
