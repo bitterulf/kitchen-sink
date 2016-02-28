@@ -32,32 +32,12 @@
             v:puv.v + sheetengine.scene.center.v
           });
 
-          console.log(pxy);
-        }
-
-        canvasElement.onmousemove = function(event) {
-          // get the hover coordinates
-          var puv = {
-            u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
-            v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset
-          };
-
-          // check if the object has been hovered
-          var objhovered = isObjectHovered(sheet, puv);
-          if (objhovered) {
-            alert('you got near');
+          if (pxy.x > sheet.centerp.x - sheet.width / 2
+             && pxy.x < sheet.centerp.x + sheet.width / 2
+             && pxy.y > sheet.centerp.y - sheet.height / 2
+             && pxy.y < sheet.centerp.y + sheet.height / 2) {
+            console.log(puv, pxy, sheet.centerp, sheetengine.drawing.getPointuv(sheet.centerp));
           }
-        }
-
-        function isObjectHovered(obj, puv) {
-          var ouv = sheetengine.drawing.getPointuv(obj.centerp);
-          if (puv.u > ouv.u - 20 &&
-            puv.u < ouv.u - 20 + 40 &&
-            puv.v > ouv.v - 30 &&
-            puv.v < ouv.v - 30 + 40)
-            return true;
-
-          return false;
         }
 
         sheetengine.calc.calculateAllSheets();
