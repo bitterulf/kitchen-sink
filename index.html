@@ -14,13 +14,17 @@
         var basesheet = new sheetengine.BaseSheet({x:0,y:0,z:0}, {alphaD:90,betaD:0,gammaD:0}, {w:256,h:256});
         basesheet.color = '#5D7E36';
 
-        var sheet = new sheetengine.Sheet({x:0,y:0,z:10}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
-        // sheet.context.fillStyle = '#FFF';
-        // sheet.context.fillRect(0,0,40,40);
-        sheet.context.drawImage(purple, 0,0);
-        sheet.onclick = function() {
-          alert('foo');
+        var createSheet = function(x, y, z) {
+          var sheet = new sheetengine.Sheet({x:x, y:y, z:z}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
+          // sheet.context.fillStyle = '#FFF';
+          // sheet.context.fillRect(0,0,40,40);
+          sheet.context.drawImage(purple, 0,0);
+
+          return sheet;
         };
+
+        var sheet1 = createSheet(0, 0, 0);
+        var sheet2 = createSheet(128, 0, 0);
 
         canvasElement.onclick = function(event) {
           var coordsFromEvent = function(event) {
@@ -47,10 +51,13 @@
           };
 
           var pxy = coordsFromEvent(event);
-          console.log(pxy);
+          console.log(sheetengine.drawing.getPointuv(sheet1.centerp));
 
-          if (overlap(sheet, pxy)) {
-            console.log(pxy, sheetengine.drawing.getPointuv(sheet.centerp));
+          if (overlap(sheet1, pxy)) {
+            console.log('hit 1');
+          }
+          if (overlap(sheet2, pxy)) {
+            console.log('hit 2');
           }
         }
 
