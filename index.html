@@ -21,6 +21,14 @@
           sheet.context.drawImage(purple, 0,0);
           sheet.onclick = onclick;
 
+          var wallSheet = new sheetengine.Sheet({x:x, y:y+64, z:z+32}, {alphaD:0,betaD:0,gammaD:0}, {w: 128,h: 64});
+          wallSheet.context.fillStyle = '#FFF';
+          wallSheet.context.fillRect(0,0,128,128);
+
+          var wallSheet2 = new sheetengine.Sheet({x:x+64, y:y, z:z+32}, {alphaD:0,betaD:0,gammaD:90}, {w: 128,h: 64});
+          wallSheet2.context.fillStyle = '#FFF';
+          wallSheet2.context.fillRect(0,0,128,128);
+
           return sheet;
         };
 
