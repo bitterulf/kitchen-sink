@@ -24,13 +24,13 @@
         };
 
         var sheet1 = createSheet(0, 0, 0);
-        var sheet2 = createSheet(128, 0, 0);
+        var sheet2 = createSheet(128, 0, 64);
 
         canvasElement.onclick = function(event) {
-          var coordsFromEvent = function(event) {
+          var coordsFromEvent = function(event, z) {
             var puv = {
               u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
-              v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset
+              v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset + z
             };
             var pxy = sheetengine.transforms.inverseTransformPoint({
               u:puv.u + sheetengine.scene.center.u,
@@ -40,7 +40,8 @@
             return pxy;
           };
 
-          var overlap = function(obj, coords) {
+          var overlap = function(obj, event) {
+            var coords = coordsFromEvent(event, obj.centerp.z);
             if (coords.x > obj.centerp.x - obj.width / 2
                && coords.x < obj.centerp.x + obj.width / 2
                && coords.y > obj.centerp.y - obj.height / 2
@@ -50,13 +51,12 @@
             return false;
           };
 
-          var pxy = coordsFromEvent(event);
-          console.log(sheetengine.drawing.getPointuv(sheet1.centerp));
+          // console.log(sheetengine.drawing.getPointuv(sheet1.centerp));
 
-          if (overlap(sheet1, pxy)) {
+          if (overlap(sheet1, event)) {
             console.log('hit 1');
           }
-          if (overlap(sheet2, pxy)) {
+          if (overlap(sheet2, event)) {
             console.log('hit 2');
           }
         }
