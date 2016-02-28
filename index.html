@@ -1,0 +1,74 @@
+<html>
+  <head>
+    <title>kitchen sink</title>
+    <script src="js/sheetengine-1.2.0.js"></script>
+    <script src="js/pxloader-all.min.js"></script>
+    <script type="text/javascript">
+      var loader = new PxLoader();
+      var purple = loader.addImage('images/texture.png');
+
+      loader.addCompletionListener(function() {
+        var canvasElement = document.getElementById('mainCanvas');
+        sheetengine.scene.init(canvasElement, {w:2000,h:1500});
+
+        var basesheet = new sheetengine.BaseSheet({x:0,y:0,z:0}, {alphaD:90,betaD:0,gammaD:0}, {w:256,h:256});
+        basesheet.color = '#5D7E36';
+
+        var sheet = new sheetengine.Sheet({x:0,y:0,z:10}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
+        // sheet.context.fillStyle = '#FFF';
+        // sheet.context.fillRect(0,0,40,40);
+        sheet.context.drawImage(purple, 0,0);
+        sheet.onclick = function() {
+          alert('foo');
+        };
+
+        canvasElement.onclick = function(event) {
+          var puv = {
+            u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
+            v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset
+          };
+          var pxy = sheetengine.transforms.inverseTransformPoint({
+            u:puv.u + sheetengine.scene.center.u,
+            v:puv.v + sheetengine.scene.center.v
+          });
+
+          console.log(pxy);
+        }
+
+        canvasElement.onmousemove = function(event) {
+          // get the hover coordinates
+          var puv = {
+            u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
+            v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset
+          };
+
+          // check if the object has been hovered
+          var objhovered = isObjectHovered(sheet, puv);
+          if (objhovered) {
+            alert('you got near');
+          }
+        }
+
+        function isObjectHovered(obj, puv) {
+          var ouv = sheetengine.drawing.getPointuv(obj.centerp);
+          if (puv.u > ouv.u - 20 &&
+            puv.u < ouv.u - 20 + 40 &&
+            puv.v > ouv.v - 30 &&
+            puv.v < ouv.v - 30 + 40)
+            return true;
+
+          return false;
+        }
+
+        sheetengine.calc.calculateAllSheets();
+
+        sheetengine.drawing.drawScene(true);
+      });
+
+      loader.start();
+    </script>
+  </head>
+  <body>
+    <canvas id="mainCanvas" width="500" height="300"></canvas>
+  </body>
+</html>
