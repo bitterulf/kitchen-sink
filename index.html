@@ -5,7 +5,9 @@
     <script src="js/pxloader-all.min.js"></script>
     <script type="text/javascript">
       var loader = new PxLoader();
-      var purple = loader.addImage('images/texture.png');
+      var ground = loader.addImage('images/ground.png');
+      var wood = loader.addImage('images/wood.png');
+      var roof = loader.addImage('images/roof.png');
 
       loader.addCompletionListener(function() {
         var canvasElement = document.getElementById('mainCanvas');
@@ -14,27 +16,28 @@
         var basesheet = new sheetengine.BaseSheet({x:0,y:0,z:0}, {alphaD:90,betaD:0,gammaD:0}, {w:256,h:256});
         basesheet.color = '#5D7E36';
 
-        var createSheet = function(x, y, z, onclick) {
+        var createBuilding = function(x, y, z, onclick) {
           var sheet = new sheetengine.Sheet({x:x, y:y, z:z}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
           // sheet.context.fillStyle = '#FFF';
           // sheet.context.fillRect(0,0,40,40);
-          sheet.context.drawImage(purple, 0,0);
+          sheet.context.drawImage(ground, 0,0);
           sheet.onclick = onclick;
 
-          var wallSheet = new sheetengine.Sheet({x:x, y:y+64, z:z+32}, {alphaD:0,betaD:0,gammaD:0}, {w: 128,h: 64});
-          wallSheet.context.fillStyle = '#FFF';
-          wallSheet.context.fillRect(0,0,128,128);
+          var wallSheet = new sheetengine.Sheet({x:x, y:y+32, z:z+16}, {alphaD:0,betaD:0,gammaD:0}, {w: 64,h: 32});
+          wallSheet.context.drawImage(wood, 0,0);
 
-          var wallSheet2 = new sheetengine.Sheet({x:x+64, y:y, z:z+32}, {alphaD:0,betaD:0,gammaD:90}, {w: 128,h: 64});
-          wallSheet2.context.fillStyle = '#FFF';
-          wallSheet2.context.fillRect(0,0,128,128);
+          var wallSheet2 = new sheetengine.Sheet({x:x+32, y:y, z:z+16}, {alphaD:0,betaD:0,gammaD:90}, {w: 64,h: 32});
+          wallSheet2.context.drawImage(wood, 0,0);
+
+          var roofSheet = new sheetengine.Sheet({x:x, y:y, z:z+32}, {alphaD:90,betaD:0,gammaD:0}, {w: 64,h: 64});
+          roofSheet.context.drawImage(roof, 0,0);
 
           return sheet;
         };
 
         var sheets = [];
-        sheets.push(createSheet(0, 0, 0, function(event) { console.log('hit1'); }));
-        sheets.push(createSheet(128, 0, 64, function(event) { console.log('hit2'); }));
+        sheets.push(createBuilding(0, 0, 0, function(event) { console.log('hit1'); }));
+        sheets.push(createBuilding(128, 0, 0, function(event) { console.log('hit2'); }));
 
         canvasElement.onclick = function(event) {
           var coordsFromEvent = function(event, z) {
