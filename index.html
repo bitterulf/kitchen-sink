@@ -32,9 +32,17 @@
           this.roofSheet.context.drawImage(roof, 0,0);
         }
 
+        Building.prototype.destroy = function() {
+          this.groundSheet.destroy();
+          this.wallSheet.destroy();
+          this.wallSheet2.destroy();
+          this.roofSheet.destroy();
+        }
+
         var sheets = [];
         sheets.push(new Building(0, 0, 0, function(event) { console.log('hit1'); }));
         sheets.push(new Building(128, 0, 0, function(event) { console.log('hit2'); }));
+        sheets[0].destroy();
 
         canvasElement.onclick = function(event) {
           var coordsFromEvent = function(event, z) {
