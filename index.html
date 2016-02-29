@@ -16,28 +16,24 @@
         var basesheet = new sheetengine.BaseSheet({x:0,y:0,z:0}, {alphaD:90,betaD:0,gammaD:0}, {w:512,h:512});
         basesheet.color = '#5D7E36';
 
-        var createBuilding = function(x, y, z, onclick) {
-          var sheet = new sheetengine.Sheet({x:x, y:y, z:z}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
-          // sheet.context.fillStyle = '#FFF';
-          // sheet.context.fillRect(0,0,40,40);
-          sheet.context.drawImage(ground, 0,0);
-          sheet.onclick = onclick;
+        var Building = function(x, y, z, onclick) {
+          this.groundSheet = new sheetengine.Sheet({x:x, y:y, z:z}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
+          this.groundSheet.context.drawImage(ground, 0,0);
+          this.onclick = onclick;
 
-          var wallSheet = new sheetengine.Sheet({x:x, y:y+32, z:z+16}, {alphaD:0,betaD:0,gammaD:0}, {w: 64,h: 32});
-          wallSheet.context.drawImage(wood, 0,0);
+          this.wallSheet = new sheetengine.Sheet({x:x, y:y+32, z:z+16}, {alphaD:0,betaD:0,gammaD:0}, {w: 64,h: 32});
+          this.wallSheet.context.drawImage(wood, 0,0);
 
-          var wallSheet2 = new sheetengine.Sheet({x:x+32, y:y, z:z+16}, {alphaD:0,betaD:0,gammaD:90}, {w: 64,h: 32});
-          wallSheet2.context.drawImage(wood, 0,0);
+          this.wallSheet2 = new sheetengine.Sheet({x:x+32, y:y, z:z+16}, {alphaD:0,betaD:0,gammaD:90}, {w: 64,h: 32});
+          this.wallSheet2.context.drawImage(wood, 0,0);
 
-          var roofSheet = new sheetengine.Sheet({x:x, y:y, z:z+32}, {alphaD:90,betaD:0,gammaD:0}, {w: 64,h: 64});
-          roofSheet.context.drawImage(roof, 0,0);
-
-          return sheet;
-        };
+          this.roofSheet = new sheetengine.Sheet({x:x, y:y, z:z+32}, {alphaD:90,betaD:0,gammaD:0}, {w: 64,h: 64});
+          this.roofSheet.context.drawImage(roof, 0,0);
+        }
 
         var sheets = [];
-        sheets.push(createBuilding(0, 0, 0, function(event) { console.log('hit1'); }));
-        sheets.push(createBuilding(128, 0, 0, function(event) { console.log('hit2'); }));
+        sheets.push(new Building(0, 0, 0, function(event) { console.log('hit1'); }));
+        sheets.push(new Building(128, 0, 0, function(event) { console.log('hit2'); }));
 
         canvasElement.onclick = function(event) {
           var coordsFromEvent = function(event, z) {
@@ -68,13 +64,13 @@
 
           var checkOverlapSheets = function(sheets) {
             sheets = sheets.sort(function(a, b) {
-              return  a.centerp.z < b.centerp.z;
+              return  a.groundSheet.centerp.z < b.groundSheet.centerp.z;
             });
 
             var hit = false;
 
             sheets.forEach(function(sheet) {
-              if (!hit && overlap(sheet, event)) {
+              if (!hit && overlap(sheet.groundSheet, event)) {
                 sheet.onclick(event);
                 hit = true;
               }
