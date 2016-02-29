@@ -23,6 +23,7 @@
 
           this.wallSheet = new sheetengine.Sheet({x:x, y:y+32, z:z+16}, {alphaD:0,betaD:0,gammaD:0}, {w: 64,h: 32});
           this.wallSheet.context.drawImage(wood, 0,0);
+          this.wallSheet.context.clearRect(30,12,20,20);
 
           this.wallSheet2 = new sheetengine.Sheet({x:x+32, y:y, z:z+16}, {alphaD:0,betaD:0,gammaD:90}, {w: 64,h: 32});
           this.wallSheet2.context.drawImage(wood, 0,0);
