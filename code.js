@@ -17,7 +17,9 @@ Document.prototype.render = function(renderFunctions) {
   }
 };
 
-var extend = function(Base, constructor, extensions) {
+var extend = function(Base, constructor) {
+  var extensions = Array.prototype.slice.call(arguments, 2);
+
   var Offspring;
 
   Offspring = function() {
@@ -27,9 +29,11 @@ var extend = function(Base, constructor, extensions) {
   Offspring.prototype = Base.prototype;
   Offspring.prototype.parent = Base.prototype.constructor;
 
-  for (var key in extensions) {
-    Offspring.prototype[key] = extensions[key];
-  }
+  extensions.forEach(function(extension) {
+    for (var key in extension) {
+      Offspring.prototype[key] = extension[key];
+    }
+  });
 
   return Offspring;
 };
@@ -40,7 +44,12 @@ var Note = extend(Document, function() {
 }, {
   addPage: function() {
   }
-});
+},
+{
+  removePage: function() {
+  }
+}
+);
 
 var specialNote = extend(Note, function() {
   console.log('note');
