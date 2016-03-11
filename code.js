@@ -16,7 +16,11 @@ Document.prototype.render = function(renderFunctions) {
   }
 };
 
-var extend = function(Base, constructor) {
+var extend = function() {
+  var args = Array.prototype.slice.call(arguments);
+  var constructor = args.pop(arguments);
+  var Base = args[0];
+
   var Offspring = function() {
     this.parent();
     constructor.apply(this);
