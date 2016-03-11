@@ -12,3 +12,14 @@ var Document = extend(Object, function() {
 var doc1 = new Document();
 
 doc1.render(true);
+
+var notifier = require('node-notifier');
+
+notifier.notify({
+  title: 'Nodemon rerun',
+  message: 'Everything worked as expected!',
+  sound: true,
+  wait: true
+}, function (err, response) {
+
+});

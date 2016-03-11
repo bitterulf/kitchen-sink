@@ -1,0 +1,22 @@
+{
+  "name": "kitchen-sink",
+  "version": "1.0.0",
+  "description": "kitchen sink for various things",
+  "main": "code.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitterulf/kitchen-sink.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bitterulf/kitchen-sink/issues"
+  },
+  "homepage": "https://github.com/bitterulf/kitchen-sink#readme",
+  "dependencies": {
+    "node-notifier": "^4.5.0"
+  }
+}
