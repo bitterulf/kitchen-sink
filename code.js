@@ -2,21 +2,17 @@ var Document = function() {
   this.createdAt = new Date();
 };
 
-Document.prototype.template = 'default';
+Document.prototype.render = function(renderFunctions) {
+  function isFunction(functionToCheck) {
+   var getType = {};
+   return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+  }
 
-Document.prototype.init = function() {
-  console.log('document init');
-  this.createdAt = new Date();
-};
-
-Document.prototype.open = function() {
-
-};
-
-Document.prototype.render = function() {
   console.log('----');
   for (var key in this) {
-    console.log(key, this[key], this.hasOwnProperty(key));
+    if (renderFunctions || !isFunction(this[key])) {
+      console.log(key, this[key], this.hasOwnProperty(key));
+    }
   }
 };
 
@@ -42,4 +38,3 @@ Note.prototype.addPage = function() {
 var note1 = new Note();
 
 note1.render();
-
