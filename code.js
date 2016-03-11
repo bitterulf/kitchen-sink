@@ -17,7 +17,7 @@ Document.prototype.render = function(renderFunctions) {
   }
 };
 
-var extend = function(Base, constructor) {
+var extend = function(Base, constructor, extensions) {
   var Offspring;
 
   Offspring = function() {
@@ -27,18 +27,26 @@ var extend = function(Base, constructor) {
   Offspring.prototype = Base.prototype;
   Offspring.prototype.parent = Base.prototype.constructor;
 
+  for (var key in extensions) {
+    Offspring.prototype[key] = extensions[key];
+  }
+
   return Offspring;
 };
 
 var Note = extend(Document, function() {
   console.log('note');
   this.maxPages = 10;
+}, {
+  addPage: function() {
+  }
 });
 
-Note.prototype.addPage = function() {
-
-};
+var specialNote = extend(Note, function() {
+  console.log('note');
+  this.maxPages = 10;
+});
 
 var note1 = new Note();
 
-note1.render();
+note1.render(true);
