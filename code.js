@@ -17,22 +17,15 @@ Document.prototype.render = function(renderFunctions) {
   }
 };
 
-var extend = function() {
-  var args = Array.prototype.slice.call(arguments);
-  var constructor = args.pop(arguments);
-
-  var Bases = args;
-
+var extend = function(Base, constructor) {
   var Offspring;
 
-  Bases.forEach(function(Base) {
-    Offspring = function() {
-      this.parent();
-      constructor.apply(this);
-    };
-    Offspring.prototype = Base.prototype;
-    Offspring.prototype.parent = Base.prototype.constructor;
-  });
+  Offspring = function() {
+    this.parent();
+    constructor.apply(this);
+  };
+  Offspring.prototype = Base.prototype;
+  Offspring.prototype.parent = Base.prototype.constructor;
 
   return Offspring;
 };
