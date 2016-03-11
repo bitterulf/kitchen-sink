@@ -1,24 +1,5 @@
-var Document = function() {
-  console.log('doc');
-  this.createdAt = new Date();
-};
-
-Document.prototype.render = function(renderFunctions) {
-  function isFunction(functionToCheck) {
-   var getType = {};
-   return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
-  }
-
-  console.log('----');
-  for (var key in this) {
-    if (renderFunctions || !isFunction(this[key])) {
-      console.log(key, this[key], this.hasOwnProperty(key));
-    }
-  }
-};
-
 var extend = function(Base, constructor) {
-  var extensions = Array.prototype.slice.call(arguments, 2);
+  var mixins = Array.prototype.slice.call(arguments, 2);
 
   var Offspring;
 
@@ -29,30 +10,59 @@ var extend = function(Base, constructor) {
   Offspring.prototype = Base.prototype;
   Offspring.prototype.parent = Base.prototype.constructor;
 
-  extensions.forEach(function(extension) {
-    for (var key in extension) {
-      Offspring.prototype[key] = extension[key];
+  mixins.forEach(function(mixin) {
+    for (var key in mixin) {
+      Offspring.prototype[key] = mixin[key];
     }
   });
 
   return Offspring;
 };
 
+var pageMixin = {
+  addPage: function() {
+  },
+  removePage: function() {
+  }
+};
+
+var persistMixin = {
+  save: function() {
+  },
+  reload: function() {
+  }
+};
+
+var renderMixin = {
+  render: function(renderFunctions) {
+    function isFunction(functionToCheck) {
+     var getType = {};
+     return functionToCheck && getType.toString.call(functionToCheck) === '[object Function]';
+    }
+
+    console.log('----');
+    for (var key in this) {
+      if (renderFunctions || !isFunction(this[key])) {
+        console.log(key, this[key], this.hasOwnProperty(key));
+      }
+    }
+  }
+};
+
+var Document = extend(Object, function() {
+  console.log('doc');
+  this.createdAt = new Date();
+}, renderMixin
+);
+
 var Note = extend(Document, function() {
   console.log('note');
   this.maxPages = 10;
-}, {
-  addPage: function() {
-  }
-},
-{
-  removePage: function() {
-  }
-}
+}, pageMixin, persistMixin
 );
 
 var specialNote = extend(Note, function() {
-  console.log('note');
+  console.log('specialnote');
   this.maxPages = 10;
 });
 
