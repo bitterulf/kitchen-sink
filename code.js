@@ -1,4 +1,5 @@
 var Document = function() {
+  console.log('doc');
   this.createdAt = new Date();
 };
 
@@ -19,19 +20,25 @@ Document.prototype.render = function(renderFunctions) {
 var extend = function() {
   var args = Array.prototype.slice.call(arguments);
   var constructor = args.pop(arguments);
-  var Base = args[0];
 
-  var Offspring = function() {
-    this.parent();
-    constructor.apply(this);
-  };
-  Offspring.prototype = Base.prototype;
-  Offspring.prototype.parent = Base.prototype.constructor;
+  var Bases = args;
+
+  var Offspring;
+
+  Bases.forEach(function(Base) {
+    Offspring = function() {
+      this.parent();
+      constructor.apply(this);
+    };
+    Offspring.prototype = Base.prototype;
+    Offspring.prototype.parent = Base.prototype.constructor;
+  });
 
   return Offspring;
 };
 
 var Note = extend(Document, function() {
+  console.log('note');
   this.maxPages = 10;
 });
 
