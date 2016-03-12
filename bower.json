@@ -1,0 +1,22 @@
+{
+  "name": "kitchen-sink",
+  "homepage": "https://github.com/bitterulf/kitchen-sink",
+  "authors": [
+    "Bitterulf"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "caman": "^4.1.2"
+  }
+}

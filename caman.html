@@ -1,0 +1,20 @@
+<html>
+  <head>
+    <title>caman</title>
+    <script type="text/javascript" src="bower_components/caman/dist/caman.full.min.js"></script>
+    <script type ="text/javascript">
+      var start = function() {
+        Caman('#wood', function () {
+          this.brightness(10);
+          this.contrast(30);
+          this.sepia(60);
+          this.saturation(-30);
+          this.render();
+        });
+      }
+    </script>
+  </head>
+  <body onload="start()">
+    <img id="wood" src="images/wood.png" />
+  </body>
+</html>
