@@ -1,45 +1,25 @@
-var Document = function() {
+var extend = require('./extend.js');
+
+
+var renderMixin =  require('./mixins/renderMixin.js');
+
+var Document = extend(Object, function() {
+  console.log('doc');
   this.createdAt = new Date();
-};
+}, renderMixin
+);
 
-Document.prototype.template = 'default';
+var doc1 = new Document();
 
-Document.prototype.init = function() {
-  console.log('document init');
-  this.createdAt = new Date();
-};
+doc1.render(true);
 
-Document.prototype.open = function() {
+var notifier = require('node-notifier');
 
-};
+notifier.notify({
+  title: 'Nodemon rerun',
+  message: 'Everything worked as expected!',
+  sound: true,
+  wait: true
+}, function (err, response) {
 
-Document.prototype.render = function() {
-  console.log('----');
-  for (var key in this) {
-    console.log(key, this[key], this.hasOwnProperty(key));
-  }
-};
-
-var extend = function(Base, constructor) {
-  var Offspring = function() {
-    this.parent();
-    constructor.apply(this);
-  };
-  Offspring.prototype = Base.prototype;
-  Offspring.prototype.parent = Base.prototype.constructor;
-
-  return Offspring;
-};
-
-var Note = extend(Document, function() {
-  this.maxPages = 10;
 });
-
-Note.prototype.addPage = function() {
-
-};
-
-var note1 = new Note();
-
-note1.render();
-

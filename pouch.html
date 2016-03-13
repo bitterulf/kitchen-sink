@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <title>couch</title>
+    <script src="js/pouchdb-5.3.0.min.js"></script>
+  </head>
+  <body>
+    <script type="text/javascript">
+      // PouchDB.debug.enable('*');
+      PouchDB.debug.disable();
+
+      var db = new PouchDB('kittens');
+      db.info().then(function (info) {
+        console.log(info);
+      })
+
+      if (false) {
+        var doc = {
+          "_id": "mittens",
+          "name": "Mittens"
+        };
+        db.put(doc);
+      };
+
+      db.get('mittens').then(function (doc) {
+        console.log(doc);
+      });
+
+    </script>
+  </body>
+</html>
