@@ -4,10 +4,12 @@
     <script src="js/sheetengine-1.2.0.js"></script>
     <script src="js/pxloader-all.min.js"></script>
     <script type="text/javascript" src="bower_components/caman/dist/caman.full.min.js"></script>
+    <script type="text/javascript" src="bower_components/async/dist/async.min.js"></script>
     <script type="text/javascript">
-      var convertImage = function (url, cb) {
-        Caman('#temp', url, function () {
-          this.hue(20);
+
+      var convertImage = function (data, cb) {
+        Caman('#temp', data.url, function () {
+          this.hue(data.hue);
           var that = this;
           this.render(function() {
             window.setInterval(function() {
@@ -17,13 +19,23 @@
         });
       };
 
+      var convertImages = function(images, cb) {
+        async.map(images, convertImage, cb);
+      };
+
       var loader = new PxLoader();
       var ground = loader.addImage('images/ground.png');
       var wood = loader.addImage('images/wood.png');
       var roof = loader.addImage('images/roof.png');
 
+      var imageVariants = {
+        ground: {url: 'images/ground.png', hue: 10},
+        wood: {url: 'images/wood.png', hue: 10},
+        roof: {url: 'images/roof.png', hue: 10}
+      };
+
       loader.addCompletionListener(function() {
-        convertImage('images/ground.png', function(err, groundImg) {
+        convertImages(imageVariants, function(err, textures) {
           var canvasElement = document.getElementById('mainCanvas');
           sheetengine.scene.init(canvasElement, {w:2000,h:1500});
 
@@ -32,18 +44,18 @@
 
           var Building = function(x, y, z, onclick) {
             this.groundSheet = new sheetengine.Sheet({x:x, y:y, z:z}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
-            this.groundSheet.context.drawImage(groundImg, 0,0);
+            this.groundSheet.context.drawImage(textures.ground, 0,0);
             this.onclick = onclick;
 
             this.wallSheet = new sheetengine.Sheet({x:x, y:y+32, z:z+16}, {alphaD:0,betaD:0,gammaD:0}, {w: 64,h: 32});
-            this.wallSheet.context.drawImage(wood, 0,0);
+            this.wallSheet.context.drawImage(textures.wood, 0,0);
             this.wallSheet.context.clearRect(30,12,20,20);
 
             this.wallSheet2 = new sheetengine.Sheet({x:x+32, y:y, z:z+16}, {alphaD:0,betaD:0,gammaD:90}, {w: 64,h: 32});
-            this.wallSheet2.context.drawImage(wood, 0,0);
+            this.wallSheet2.context.drawImage(textures.wood, 0,0);
 
             this.roofSheet = new sheetengine.Sheet({x:x, y:y, z:z+32}, {alphaD:90,betaD:0,gammaD:0}, {w: 64,h: 64});
-            this.roofSheet.context.drawImage(roof, 0,0);
+            this.roofSheet.context.drawImage(textures.roof, 0,0);
           }
 
           Building.prototype.destroy = function() {

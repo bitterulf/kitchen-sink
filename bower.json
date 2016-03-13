@@ -17,6 +17,7 @@
     "tests"
   ],
   "dependencies": {
-    "caman": "^4.1.2"
+    "caman": "^4.1.2",
+    "async": "^1.5.2"
   }
 }
