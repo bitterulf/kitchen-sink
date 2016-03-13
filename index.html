@@ -3,101 +3,119 @@
     <title>kitchen sink</title>
     <script src="js/sheetengine-1.2.0.js"></script>
     <script src="js/pxloader-all.min.js"></script>
+    <script type="text/javascript" src="bower_components/caman/dist/caman.full.min.js"></script>
     <script type="text/javascript">
+      var convertImage = function (url, cb) {
+        Caman('#temp', url, function () {
+          this.hue(20);
+          var that = this;
+          this.render(function() {
+            window.setInterval(function() {
+              cb(null, that.toImage('png'));
+            });
+          });
+        });
+      };
+
       var loader = new PxLoader();
       var ground = loader.addImage('images/ground.png');
       var wood = loader.addImage('images/wood.png');
       var roof = loader.addImage('images/roof.png');
 
       loader.addCompletionListener(function() {
-        var canvasElement = document.getElementById('mainCanvas');
-        sheetengine.scene.init(canvasElement, {w:2000,h:1500});
+        convertImage('images/ground.png', function(err, groundImg) {
+          var canvasElement = document.getElementById('mainCanvas');
+          sheetengine.scene.init(canvasElement, {w:2000,h:1500});
 
-        var basesheet = new sheetengine.BaseSheet({x:0,y:0,z:0}, {alphaD:90,betaD:0,gammaD:0}, {w:512,h:512});
-        basesheet.color = '#5D7E36';
+          var basesheet = new sheetengine.BaseSheet({x:0,y:0,z:0}, {alphaD:90,betaD:0,gammaD:0}, {w:512,h:512});
+          basesheet.color = '#5D7E36';
 
-        var Building = function(x, y, z, onclick) {
-          this.groundSheet = new sheetengine.Sheet({x:x, y:y, z:z}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
-          this.groundSheet.context.drawImage(ground, 0,0);
-          this.onclick = onclick;
+          var Building = function(x, y, z, onclick) {
+            this.groundSheet = new sheetengine.Sheet({x:x, y:y, z:z}, {alphaD:90,betaD:0,gammaD:0}, {w: 128,h: 128});
+            this.groundSheet.context.drawImage(groundImg, 0,0);
+            this.onclick = onclick;
 
-          this.wallSheet = new sheetengine.Sheet({x:x, y:y+32, z:z+16}, {alphaD:0,betaD:0,gammaD:0}, {w: 64,h: 32});
-          this.wallSheet.context.drawImage(wood, 0,0);
-          this.wallSheet.context.clearRect(30,12,20,20);
+            this.wallSheet = new sheetengine.Sheet({x:x, y:y+32, z:z+16}, {alphaD:0,betaD:0,gammaD:0}, {w: 64,h: 32});
+            this.wallSheet.context.drawImage(wood, 0,0);
+            this.wallSheet.context.clearRect(30,12,20,20);
 
-          this.wallSheet2 = new sheetengine.Sheet({x:x+32, y:y, z:z+16}, {alphaD:0,betaD:0,gammaD:90}, {w: 64,h: 32});
-          this.wallSheet2.context.drawImage(wood, 0,0);
+            this.wallSheet2 = new sheetengine.Sheet({x:x+32, y:y, z:z+16}, {alphaD:0,betaD:0,gammaD:90}, {w: 64,h: 32});
+            this.wallSheet2.context.drawImage(wood, 0,0);
 
-          this.roofSheet = new sheetengine.Sheet({x:x, y:y, z:z+32}, {alphaD:90,betaD:0,gammaD:0}, {w: 64,h: 64});
-          this.roofSheet.context.drawImage(roof, 0,0);
-        }
+            this.roofSheet = new sheetengine.Sheet({x:x, y:y, z:z+32}, {alphaD:90,betaD:0,gammaD:0}, {w: 64,h: 64});
+            this.roofSheet.context.drawImage(roof, 0,0);
+          }
 
-        Building.prototype.destroy = function() {
-          this.groundSheet.destroy();
-          this.wallSheet.destroy();
-          this.wallSheet2.destroy();
-          this.roofSheet.destroy();
-        }
+          Building.prototype.destroy = function() {
+            this.groundSheet.destroy();
+            this.wallSheet.destroy();
+            this.wallSheet2.destroy();
+            this.roofSheet.destroy();
+          }
 
-        var sheets = [];
-        sheets.push(new Building(0, 0, 0, function(event) { console.log('hit1'); }));
-        sheets.push(new Building(128, 0, 0, function(event) { console.log('hit2'); }));
-        sheets[0].destroy();
+          var sheets = [];
+          sheets.push(new Building(0, 0, 0, function(event) { console.log('hit1'); }));
+          sheets.push(new Building(128, 0, 0, function(event) { console.log('hit2'); }));
+          sheets[0].destroy();
 
-        canvasElement.onclick = function(event) {
-          var coordsFromEvent = function(event, z) {
-            var puv = {
-              u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
-              v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset + z
+          canvasElement.onclick = function(event) {
+            var coordsFromEvent = function(event, z) {
+              var puv = {
+                u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
+                v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset + z
+              };
+              var pxy = sheetengine.transforms.inverseTransformPoint({
+                u:puv.u + sheetengine.scene.center.u,
+                v:puv.v + sheetengine.scene.center.v
+              });
+
+              return pxy;
             };
-            var pxy = sheetengine.transforms.inverseTransformPoint({
-              u:puv.u + sheetengine.scene.center.u,
-              v:puv.v + sheetengine.scene.center.v
-            });
 
-            return pxy;
-          };
-
-          var overlap = function(obj, event) {
-            var coords = coordsFromEvent(event, obj.centerp.z);
-            if (coords.x > obj.centerp.x - obj.width / 2
-               && coords.x < obj.centerp.x + obj.width / 2
-               && coords.y > obj.centerp.y - obj.height / 2
-               && coords.y < obj.centerp.y + obj.height / 2) {
-              return true;
-            }
-            return false;
-          };
-
-          // console.log(sheetengine.drawing.getPointuv(sheet1.centerp));
-
-          var checkOverlapSheets = function(sheets) {
-            sheets = sheets.sort(function(a, b) {
-              return  a.groundSheet.centerp.z < b.groundSheet.centerp.z;
-            });
-
-            var hit = false;
-
-            sheets.forEach(function(sheet) {
-              if (!hit && overlap(sheet.groundSheet, event)) {
-                sheet.onclick(event);
-                hit = true;
+            var overlap = function(obj, event) {
+              var coords = coordsFromEvent(event, obj.centerp.z);
+              if (coords.x > obj.centerp.x - obj.width / 2
+                 && coords.x < obj.centerp.x + obj.width / 2
+                 && coords.y > obj.centerp.y - obj.height / 2
+                 && coords.y < obj.centerp.y + obj.height / 2) {
+                return true;
               }
-            });
-          };
+              return false;
+            };
 
-          checkOverlapSheets(sheets);
-        }
+            // console.log(sheetengine.drawing.getPointuv(sheet1.centerp));
 
-        sheetengine.calc.calculateAllSheets();
+            var checkOverlapSheets = function(sheets) {
+              sheets = sheets.sort(function(a, b) {
+                return  a.groundSheet.centerp.z < b.groundSheet.centerp.z;
+              });
 
-        sheetengine.drawing.drawScene(true);
+              var hit = false;
+
+              sheets.forEach(function(sheet) {
+                if (!hit && overlap(sheet.groundSheet, event)) {
+                  sheet.onclick(event);
+                  hit = true;
+                }
+              });
+            };
+
+            checkOverlapSheets(sheets);
+          }
+
+          sheetengine.calc.calculateAllSheets();
+
+          sheetengine.drawing.drawScene(true);
+          // draw a second time to also render generated textures
+          sheetengine.drawing.drawScene(true);
+        });
       });
 
       loader.start();
     </script>
   </head>
   <body>
+    <canvas id="temp" style="displayo: none;"></canvas>
     <canvas id="mainCanvas" width="500" height="300"></canvas>
   </body>
 </html>
