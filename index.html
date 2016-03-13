@@ -8,7 +8,7 @@
     <script type="text/javascript">
 
       var convertImage = function (data, cb) {
-        Caman('#temp', data.url, function () {
+        Caman(document.createElement('canvas'), data.url, function () {
           this.hue(data.hue);
           var that = this;
           this.render(function() {
@@ -30,8 +30,8 @@
 
       var imageVariants = {
         ground: {url: 'images/ground.png', hue: 10},
-        wood: {url: 'images/wood.png', hue: 10},
-        roof: {url: 'images/roof.png', hue: 10}
+        wood: {url: 'images/wood.png', hue: -50},
+        roof: {url: 'images/roof.png', hue: 25}
       };
 
       loader.addCompletionListener(function() {
@@ -127,7 +127,6 @@
     </script>
   </head>
   <body>
-    <canvas id="temp" style="displayo: none;"></canvas>
     <canvas id="mainCanvas" width="500" height="300"></canvas>
   </body>
 </html>
