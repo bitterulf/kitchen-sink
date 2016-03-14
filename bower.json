@@ -18,6 +18,7 @@
   ],
   "dependencies": {
     "caman": "^4.1.2",
-    "async": "^1.5.2"
+    "async": "^1.5.2",
+    "mithril": "~0.2.3"
   }
 }

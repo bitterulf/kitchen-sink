@@ -1,0 +1,51 @@
+<html>
+  <head>
+    <title>mithril</title>
+    <script src="bower_components/mithril/mithril.min.js"></script>
+    <script>
+      var enrichElements = function (data) {
+        if (data instanceof Array) {
+          return data.map(enrichElements);
+        }
+        else if (typeof data == 'object') {
+          var result = {
+            tag: data.tag,
+            attrs: data.attrs
+          };
+
+          if (data.children) {
+            result.children = data.children.map(enrichElements);
+          }
+
+          if (result.tag == 'container') {
+            result.tag = 'div';
+            if (result.attrs.class) {
+              result.attrs.class += ' primary';
+            }
+            else {
+              result.attrs.class = 'primary';
+            }
+          }
+
+          return result;
+        }
+        else {
+          return data;
+        }
+      };
+
+      var testRender = function() {
+        return m('container', [
+          m('item', [m('item-name', 'itemA')]),
+          m('item', [m('item-name', 'itemB')])
+        ]);
+      };
+
+      var start = function() {
+        m.render(document.body, enrichElements(testRender()));
+      };
+    </script>
+  </head>
+  <body onload="start()">
+  </body>
+</html>
