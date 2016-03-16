@@ -30,14 +30,24 @@
         return one.color('hsv(0, 50%, 50%)').hue(360 * hueFloat).hex();
       };
 
+      var trainingSet = [];
+
       var handleInput = function(isGoodCombination) {
-        console.log(isGoodCombination);
+        var output = isGoodCombination ? 1 : 0;
+        var input = [hueA, hueB];
+        trainingSet.push({
+          input: input,
+          output: output
+        });
+        hueA = Math.random();
+        hueB = Math.random();
+        updateBody();
       };
 
       var hueA = Math.random();
       var hueB = Math.random();
 
-      var updateBodycolor = function() {
+      var updateBody = function() {
         document.getElementsByTagName('body')[0].innerHTML =
           '<div style="background-color: '+createColorByHueFloat(hueA)+';">hue a</div>'
           +'<div style="background-color: '+createColorByHueFloat(hueB)+';">hue b</div>'+
@@ -51,7 +61,7 @@
         myTrainer.XOR();
 
         console.log(myPerceptron.activate([1,0]));
-        updateBodycolor();
+        updateBody();
       }
     </script>
   </head>
