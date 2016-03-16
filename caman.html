@@ -1,9 +1,19 @@
 <html>
   <head>
     <title>caman</title>
+    <script src="bower_components/resilient/resilient.min.js"></script>
     <script type="text/javascript" src="bower_components/caman/dist/caman.full.min.js"></script>
     <script type ="text/javascript">
       var start = function() {
+        var client = resilient({ service: { basePath: '' }})
+        client.setServers(['http://localhost:3030']);
+        console.log(client);
+        client.get('/README.md', function (err, res) {
+          if (res.status === 200) {
+            console.log('Success:', res.data)
+          }
+        });
+
         Caman('#workspace', 'images/wood.png', function () {
           this.brightness(10);
           this.contrast(30);

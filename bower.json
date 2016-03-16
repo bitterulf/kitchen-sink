@@ -19,6 +19,8 @@
   "dependencies": {
     "caman": "^4.1.2",
     "async": "^1.5.2",
-    "synaptic": "^1.0.3"
+    "synaptic": "^1.0.3",
+    "mithril": "~0.2.3",
+    "resilient": "~0.3.3"
   }
 }

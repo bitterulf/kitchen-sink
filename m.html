@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>mithril</title>
+    <script src="bower_components/mithril/mithril.min.js"></script>
+    <script>
+      var enrichLogic = {
+        container: function(data) {
+          data.tag = 'div';
+          if (data.attrs.class) {
+            data.attrs.class += ' primary';
+          }
+          else {
+            data.attrs.class = 'primary';
+          }
+
+          return data;
+        },
+        item: function(data) {
+          if (data.children) {
+            data.children = [
+              m('div', 'item contents:'),
+              m('span', data.children)
+            ];
+          }
+          data.tag = 'div';
+          if (data.attrs.class) {
+            data.attrs.class += ' item';
+          }
+          else {
+            data.attrs.class = 'item';
+          }
+
+          return data;
+        },
+        item_name: function(data) {
+          data.tag = 'div';
+          if (data.attrs.class) {
+            data.attrs.class += ' name';
+          }
+          else {
+            data.attrs.class = 'name';
+          }
+
+          return data;
+        }
+      };
+
+      var enrichElements = function (data, enrichLogic) {
+        if (data instanceof Array) {
+          return data.map(function(data) { return enrichElements(data, enrichLogic); });
+        }
+        else if (typeof data == 'object') {
+          var result = {
+            tag: data.tag,
+            attrs: data.attrs
+          };
+
+          if (data.children) {
+            result.children = data.children.map(function(data) { return enrichElements(data, enrichLogic); });
+          }
+
+          if (enrichLogic[result.tag]) {
+            result = enrichLogic[result.tag](result);
+          }
+
+          return result;
+        }
+        else {
+          return data;
+        }
+      };
+
+      var testRender = function() {
+        return m('container', [
+          m('item', [m('item_name', 'itemA')]),
+          m('item', [m('item_name', 'itemB')])
+        ]);
+      };
+
+      var start = function() {
+        m.render(document.body, enrichElements(testRender(), enrichLogic));
+      };
+    </script>
+  </head>
+  <body onload="start()">
+  </body>
+</html>
