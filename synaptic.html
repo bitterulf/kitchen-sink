@@ -3,7 +3,35 @@
     <title>synaptic</title>
     <script type="text/javascript" src="bower_components/synaptic/dist/synaptic.min.js"></script>
     <script type ="text/javascript">
+      var Perceptron = function Perceptron(input, hidden, output)
+      {
+        // create the layers
+        var inputLayer = new synaptic.Layer(input);
+        var hiddenLayer = new synaptic.Layer(hidden);
+        var outputLayer = new synaptic.Layer(output);
+
+        // connect the layers
+        inputLayer.project(hiddenLayer);
+        hiddenLayer.project(outputLayer);
+
+        // set the layers
+        this.set({
+          input: inputLayer,
+          hidden: [hiddenLayer],
+          output: outputLayer
+        });
+      };
+
+      Perceptron.prototype = new synaptic.Network();
+      Perceptron.prototype.constructor = Perceptron;
+
       var start = function() {
+        var myPerceptron = new Perceptron(2,3,1);
+        var myTrainer = new synaptic.Trainer(myPerceptron);
+
+        myTrainer.XOR();
+
+        console.log(myPerceptron.activate([1,0]));
 
       }
     </script>
