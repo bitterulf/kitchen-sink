@@ -37,10 +37,16 @@
         var input = [hueA, hueB];
         trainingSet.push({
           input: input,
-          output: output
+          output: [output]
         });
+
         hueA = Math.random();
         hueB = Math.random();
+        updateBody();
+      };
+
+      var train = function() {
+        myTrainer.train(trainingSet);
         updateBody();
       };
 
@@ -48,19 +54,20 @@
       var hueB = Math.random();
 
       var updateBody = function() {
+        var goodPercent = parseInt(myPerceptron.activate([hueA,hueB])[0] * 100);
+        var badPercent = 100 - goodPercent;
         document.getElementsByTagName('body')[0].innerHTML =
-          '<div style="background-color: '+createColorByHueFloat(hueA)+';">hue a</div>'
-          +'<div style="background-color: '+createColorByHueFloat(hueB)+';">hue b</div>'+
-          '<button onclick="handleInput(true);">nice!</button><button onclick="handleInput(false);">ugly!</button>';
+          '<div>trainingset size: '+trainingSet.length+'</div>'
+          +'<button onclick="train();">train!</button>'
+          +'<div style="background-color: '+createColorByHueFloat(hueA)+';">hue a</div>'
+          +'<div style="background-color: '+createColorByHueFloat(hueB)+';">hue b</div>'
+          +'<button onclick="handleInput(true);">nice('+goodPercent+'%)</button><button onclick="handleInput(false);">ugly('+badPercent+'%)</button>';
       };
 
+      var myPerceptron = new Perceptron(2,3,1);
+      var myTrainer = new synaptic.Trainer(myPerceptron);
+
       var start = function() {
-        var myPerceptron = new Perceptron(2,3,1);
-        var myTrainer = new synaptic.Trainer(myPerceptron);
-
-        myTrainer.XOR();
-
-        console.log(myPerceptron.activate([1,0]));
         updateBody();
       }
     </script>
