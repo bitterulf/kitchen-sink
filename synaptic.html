@@ -26,8 +26,22 @@
       Perceptron.prototype = new synaptic.Network();
       Perceptron.prototype.constructor = Perceptron;
 
-      var updateBodycolor = function(color) {
-        document.getElementsByTagName('body')[0].style.backgroundColor = color.hex();
+      var createColorByHueFloat = function(hueFloat) {
+        return one.color('hsv(0, 50%, 50%)').hue(360 * hueFloat).hex();
+      };
+
+      var handleInput = function(isGoodCombination) {
+        console.log(isGoodCombination);
+      };
+
+      var hueA = Math.random();
+      var hueB = Math.random();
+
+      var updateBodycolor = function() {
+        document.getElementsByTagName('body')[0].innerHTML =
+          '<div style="background-color: '+createColorByHueFloat(hueA)+';">hue a</div>'
+          +'<div style="background-color: '+createColorByHueFloat(hueB)+';">hue b</div>'+
+          '<button onclick="handleInput(true);">nice!</button><button onclick="handleInput(false);">ugly!</button>';
       };
 
       var start = function() {
@@ -37,9 +51,7 @@
         myTrainer.XOR();
 
         console.log(myPerceptron.activate([1,0]));
-
-        var color = one.color('hsv(0, 50%, 50%)').hue(360*Math.random());
-        updateBodycolor(color);
+        updateBodycolor();
       }
     </script>
   </head>
