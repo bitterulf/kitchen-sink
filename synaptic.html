@@ -2,6 +2,7 @@
   <head>
     <title>synaptic</title>
     <script type="text/javascript" src="bower_components/synaptic/dist/synaptic.min.js"></script>
+    <script type="text/javascript" src="bower_components/color/one-color.js"></script>
     <script type ="text/javascript">
       var Perceptron = function Perceptron(input, hidden, output)
       {
@@ -25,6 +26,10 @@
       Perceptron.prototype = new synaptic.Network();
       Perceptron.prototype.constructor = Perceptron;
 
+      var updateBodycolor = function(color) {
+        document.getElementsByTagName('body')[0].style.backgroundColor = color.hex();
+      };
+
       var start = function() {
         var myPerceptron = new Perceptron(2,3,1);
         var myTrainer = new synaptic.Trainer(myPerceptron);
@@ -33,6 +38,8 @@
 
         console.log(myPerceptron.activate([1,0]));
 
+        var color = one.color('hsv(0, 50%, 50%)').hue(360*Math.random());
+        updateBodycolor(color);
       }
     </script>
   </head>
