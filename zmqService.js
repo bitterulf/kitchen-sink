@@ -2,6 +2,10 @@ var responder = require('zmq').socket('rep');
 responder.connect('tcp://localhost:5560');
 
 responder.on('message', function(msg) {
-  console.log('received request to process:', msg.toString());
-  responder.send('processed by Service.. input:'+msg);
+  msg = JSON.parse(msg.toString());
+  msg.payload += 'processed';
+  msg = JSON.stringify(msg);
+  setTimeout(function() {
+    responder.send(msg);
+  }, 2000);
 });

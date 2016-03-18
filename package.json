@@ -20,6 +20,7 @@
     "bluebird": "^3.3.4",
     "lunr": "^0.7.0",
     "node-notifier": "^4.5.0",
+    "shortid": "^2.2.4",
     "zmq": "^2.14.0"
   }
 }
