@@ -1,8 +1,20 @@
 var axon = require('axon');
-var requestSocket = axon.socket('req');
+var interfaceSocket = axon.socket('req');
 
-requestSocket.connect(3000, 'localhost');
+interfaceSocket.connect(3000, 'localhost');
 
-requestSocket.send('logger', function(port){
-  console.log(port);
+interfaceSocket.send('logger', function(interfaceData){
+  var replySocket = axon.socket('rep');
+  replySocket.connect(interfaceData.producerPort, 'localhost');
+
+  replySocket.on('message', function(data, reply){
+    reply(data+'bar');
+  });
+
+  var requestSocket = axon.socket('req');
+  requestSocket.connect(interfaceData.consumerPort, 'localhost');
+
+  requestSocket.send('foo', function(result){
+    console.log(result);
+  });
 });
