@@ -1,0 +1,61 @@
+<html>
+  <head>
+    <title>proto</title>
+    <script src="bower_components/mithril/mithril.min.js"></script>
+    <script src="bower_components/bluebird/js/browser/bluebird.min.js"></script>
+    <script src="bower_components/pouchdb/dist/pouchdb.min.js"></script>
+    <script src="bower_components/cuid/dist/browser-cuid.js"></script>
+    <script>
+      var db = new PouchDB('items');
+
+      var List = {
+        controller: function() {
+          var inputField = m.prop('default');
+          var items = m.prop([]);
+
+          var reloadItems = function() {
+            m.startComputation();
+            db.allDocs({include_docs: true, descending: true}, function(err, doc) {
+              items(doc.rows);
+              m.endComputation();
+            })
+          };
+
+          reloadItems();
+
+          return {
+            inputField: inputField,
+            items: items,
+            buttonClicked: function() {
+              db.put({_id: cuid(), msg: inputField()}, function callback(err, result) {
+                reloadItems();
+              });
+            },
+            removeItem: function(id, rev) {
+              db.remove({_id: id, _rev: rev}, function(err, result) {
+                reloadItems();
+              });
+            }
+          };
+        },
+        view: function(ctrl) {
+          return [
+            ctrl.items().map(function(item) {
+              return m('div', m('span', item.doc.msg), m('button', { onclick: function() {
+                ctrl.removeItem(item.doc._id, item.doc._rev);
+              } }, 'delete'));
+            }),
+            m('input', {onchange: m.withAttr("value", ctrl.inputField), value: ctrl.inputField()}),
+            m('button', {onclick: ctrl.buttonClicked}, 'add')
+          ];
+        }
+      };
+
+      var start = function() {
+        m.mount(document.body, List);
+      }
+    </script>
+  </head>
+  <body onload="start()">
+  </body>
+</html>

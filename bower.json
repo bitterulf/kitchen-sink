@@ -22,6 +22,9 @@
     "synaptic": "^1.0.3",
     "mithril": "~0.2.3",
     "resilient": "~0.3.3",
-    "color": "~3.0.0"
+    "color": "~3.0.0",
+    "pouchdb": "~5.3.1",
+    "bluebird": "~3.3.4",
+    "cuid": "~1.3.8"
   }
 }
