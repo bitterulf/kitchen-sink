@@ -1,0 +1,171 @@
+<html>
+  <head>
+    <title>sheet</title>
+    <script src="bower_components/bluebird/js/browser/bluebird.min.js"></script>
+    <script src="bower_components/underscore/underscore-min.js"></script>
+    <script src="js/sheetengine-1.2.0.js"></script>
+    <script>
+      var start = function() {
+        var initCanvas = P.promisify(function(data, cb) {
+          var canvasElement = document.getElementById('mainCanvas');
+          sheetengine.scene.init(canvasElement, {w:512,h:512});
+
+          var basesheet = new sheetengine.BaseSheet({x:0,y:0,z:0}, {alphaD:90,betaD:0,gammaD:0}, {w:256,h:256});
+          basesheet.color = '#888';
+          // sheetengine.drawObjectContour = true;
+          cb(null, canvasElement);
+        });
+
+        var createSheet = P.promisify(function(data, cb) {
+          data = _.extend({
+            x: 0,
+            y: 0,
+            z: 0,
+            a: 0,
+            b: 0,
+            g: 0,
+            w: 40,
+            h: 40
+          }, data);
+
+          var sheet = new sheetengine.Sheet(
+            {x: data.x, y: data.y, z: data.z},
+            {alphaD: data.a, betaD: data.b, gammaD: data.g},
+            {w: data.w, h: data.h}
+          );
+          sheet.context.fillStyle = '#F00';
+          sheet.context.fillRect(0,0,data.w, data.h);
+          cb(null, sheet);
+        });
+
+        var updateCanvas = P.promisify(function(data, cb) {
+          sheetengine.calc.calculateAllSheets();
+          sheetengine.drawing.drawScene(true);
+          cb(null, {});
+        });
+
+        var updateCanvasChanges = P.promisify(function(data, cb) {
+          sheetengine.drawing.drawScene(true);
+          cb(null, {});
+        });
+
+        var createStructure = P.promisify(function(data, cb) {
+          data = _.extend({
+            x: 0,
+            y: 0,
+            z: 0,
+          }, data);
+
+          Promise.map([
+            {x: 20, y: 0, z: 20, g: 90},
+            {x: 0, y: 20, z: 20, g: 0},
+            {x: -20, y: 0, z: 20, g: 90},
+            {x: 0, y: -20, z: 20, g: 0}
+          ], function(data) {
+            return createSheet(data);
+          }).then(function(sheets) {
+            var obj = new sheetengine.SheetObject(
+              {x: data.x, y: data.y, z: data.z},
+              {alphaD:0,betaD:0,gammaD:0},
+              sheets,
+              {w:60,h:68,relu:30,relv:53}
+            );
+            cb(null, obj);
+          });
+        });
+
+        var structures = [];
+
+        var attachClickEvents = P.promisify(function(canvas, objects, objectHandler, positionHandler, cb) {
+          canvas.onclick = function(event) {
+            var puv = {
+              u:event.clientX - sheetengine.canvas.offsetLeft + pageXOffset,
+              v:event.clientY - sheetengine.canvas.offsetTop + pageYOffset
+            };
+
+            var getHit = function(puv, objects) {
+              var hit;
+              objects.forEach(function(obj){
+                if (isObjectHovered(obj, puv)) {
+                  if (!hit || obj.centerpuvrel.z < hit.centerpuvrel.z) {
+                    hit = obj;
+                  }
+                }
+              });
+
+              return hit;
+            };
+
+            var isObjectHovered = function(obj, clickpos) {
+              var ouv = sheetengine.drawing.getPointuv(obj.centerp);
+
+              if (clickpos.u > ouv.u - obj.canvasSize.relu &&
+                clickpos.u < ouv.u - obj.canvasSize.relu + obj.canvasSize.w &&
+                clickpos.v > ouv.v - obj.canvasSize.relv &&
+                clickpos.v < ouv.v - obj.canvasSize.relv + obj.canvasSize.h) {
+                return true;
+              }
+
+              return false;
+            }
+
+            var hit = getHit(puv, objects);
+
+            if (hit) {
+              objectHandler(hit);
+            }
+            else {
+              var pxy = sheetengine.transforms.inverseTransformPoint({
+                u:puv.u + sheetengine.scene.center.u,
+                v:puv.v + sheetengine.scene.center.v
+              });
+              positionHandler(pxy);
+            }
+          };
+
+          cb(null)
+        });
+
+        initCanvas({})
+          .then(function(canvas) {
+            return attachClickEvents(
+              canvas,
+              structures,
+              function(obj) {
+                obj.destroy();
+                window.setTimeout(function() {
+                  updateCanvasChanges({});
+                }, 100);
+              },
+              function(pos) { console.log('POS', pos)}
+            );
+          })
+          .then(function() {
+            return createStructure({});
+          })
+          .then(function(structure) {
+            structures.push(structure);
+          })
+          .then(function() {
+            return createStructure({x: 60});
+          })
+          .then(function(structure) {
+            structures.push(structure);
+          })
+          .then(function() {
+            return createStructure({x: 60, y: 60});
+          })
+          .then(function(structure) {
+            structures.push(structure);
+          })
+          .then(updateCanvas)
+          .then(function(data){
+          console.log('done');
+        });
+      };
+    </script>
+  </head>
+  <body onload="start()">
+    <canvas id="mainCanvas" width="512" height="512"></canvas>
+  </body>
+</html>
