@@ -7,6 +7,7 @@
       primus.on('data', function (data) {
         console.log(data);
         primus.write({status: 'ready'});
+        primus.write('invalid string!');
       });
     </script>
   </head>

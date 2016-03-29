@@ -20,6 +20,7 @@
     "axon": "^2.0.2",
     "bluebird": "^3.3.4",
     "extend": "^3.0.0",
+    "fortress-maximus": "0.0.5",
     "hapi": "^13.2.2",
     "inert": "^3.2.0",
     "lunr": "^0.7.0",

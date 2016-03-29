@@ -37,7 +37,22 @@ server.start(function(err) {
 
   console.log('Server running at:', server.info.uri);
 
-  var primus = new Primus(server.listener, {});
+  var primus = new Primus(server.listener, {
+    fortress: 'spark'
+  });
+
+  primus.use('fortress maximus', require('fortress-maximus'));
+
+  primus.validate('data', function (msg, next) {
+    if ('object' !== typeof msg) return next(new Error('Invalid'));
+
+    return next();
+  });
+
+  primus.on('invalid', function invalid(err, args) {
+    console.log('INVALID!', err, args);
+  });
+
   primus.on('connection', function (spark) {
     spark.write({ action: 'init' });
     spark.on('data', function (data) {
