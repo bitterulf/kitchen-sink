@@ -28,6 +28,7 @@
     "metroplex": "^1.0.0",
     "mirage": "0.0.5",
     "node-notifier": "^4.5.0",
+    "omega-supreme": "^1.0.0",
     "primus": "^5.0.1",
     "primus-emit": "^1.0.0",
     "seneca": "^1.4.0",

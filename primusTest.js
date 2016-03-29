@@ -68,6 +68,8 @@ server.start(function(err) {
 
   primus.use('emit', require('primus-emit'));
 
+  primus.use('omega-supreme', require('omega-supreme'));
+
   primus.use('metroplex', require('metroplex'));
 
   primus.metroplex.servers(function (err, servers) {
@@ -79,6 +81,11 @@ server.start(function(err) {
   });
 
   primus.on('connection', function (spark) {
+
+    primus.forward.broadcast('data!', function (err, result) {
+      console.log(result);
+    });
+
     spark.write({ action: 'init' });
     spark.on('data', function (data) {
       console.log(data);
