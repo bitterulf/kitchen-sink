@@ -5,7 +5,7 @@
     <script>
 
       var primus = new Primus({
-        // mirage: 'foo'
+        mirage: '80094bec-46da-4696-a80b-f6ffb9cbec64'
       });
 
       // substreams do not work with events
@@ -19,6 +19,10 @@
         console.log('got id:', id);
       });
 
+      primus.on('error', function(err) {
+        console.log(err.name);
+      });
+
       primus.on('start', function (data) {
         // console.log('start', data);
         primus.emit('move', 'south');
@@ -28,6 +32,11 @@
         // console.log(data);
         primus.write({status: 'ready'});
         primus.write('invalid string!');
+      });
+
+      primus.on('end', function () {
+        // server close the connection... maybe the id is wrong?
+        console.log('END IS NEAR!');
       });
     </script>
   </head>

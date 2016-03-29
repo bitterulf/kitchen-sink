@@ -54,10 +54,27 @@ server.start(function(err) {
   });
 
   primus.use('mirage', require('mirage'));
+
   primus.id.generator(function generate(spark, fn) {
     userCollection.save$(function(err, doc) {
       if (err) return fn(err);
+      console.log('new user generated:', doc.id);
       fn(null, doc.id);
+    });
+  });
+
+  primus.id.validator(function validator(spark, fn) {
+    userCollection.load$(spark.mirage, function (err, doc) {
+      if (err) return fn(err);
+
+      if (!doc) {
+        console.log('user is not cool!', spark.mirage);
+        return fn(new Error('user does not exist'));
+      }
+      else {
+        console.log('user is cool', spark.mirage);
+        fn(null);
+      }
     });
   });
 
