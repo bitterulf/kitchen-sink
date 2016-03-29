@@ -1,3 +1,5 @@
+var config = require('config');
+
 var Primus = require('primus');
 
 var Path = require('path');
@@ -14,7 +16,9 @@ var server = new Hapi.Server({
     }
 });
 
-server.connection({ port: 8080 });
+console.log('set NODE_ENV=', config.get('name'));
+
+server.connection({ port: config.get('port') });
 
 server.register(Inert, function(){});
 
@@ -39,7 +43,8 @@ server.start(function(err) {
 
   var primus = new Primus(server.listener, {
     fortress: 'spark',
-    'mirage timeout': 5000
+    'mirage timeout': 5000,
+    namespace: 'metroplex',
   });
 
   primus.use('mirage', require('mirage'));
@@ -50,8 +55,6 @@ server.start(function(err) {
 
   primus.use('fortress maximus', require('fortress-maximus'));
 
-  primus.use('emit', require('primus-emit'));
-
   primus.validate('data', function (msg, next) {
     if ('object' !== typeof msg) return next(new Error('Invalid'));
 
@@ -61,6 +64,14 @@ server.start(function(err) {
   primus.validate('move', function (msg, next) {
     console.log('spark', this);
     return next();
+  });
+
+  primus.use('emit', require('primus-emit'));
+
+  primus.use('metroplex', require('metroplex'));
+
+  primus.metroplex.servers(function (err, servers) {
+    console.log('registered servers:', servers);
   });
 
   primus.on('invalid', function invalid(err, args) {

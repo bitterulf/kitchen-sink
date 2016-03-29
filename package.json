@@ -19,11 +19,13 @@
   "dependencies": {
     "axon": "^2.0.2",
     "bluebird": "^3.3.4",
+    "config": "^1.19.0",
     "extend": "^3.0.0",
     "fortress-maximus": "0.0.5",
     "hapi": "^13.2.2",
     "inert": "^3.2.0",
     "lunr": "^0.7.0",
+    "metroplex": "^1.0.0",
     "mirage": "0.0.5",
     "node-notifier": "^4.5.0",
     "primus": "^5.0.1",
