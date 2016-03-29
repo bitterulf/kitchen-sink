@@ -8,17 +8,24 @@
         // mirage: 'foo'
       });
 
+      // substreams do not work with events
+      var chat = primus.substream('chat');
+
+      chat.on('data', function (data) {
+        chat.write({text: 'client answer'});
+      });
+
       primus.on('mirage', function (id) {
-        console.log('got id:', id);
+        // console.log('got id:', id);
       });
 
       primus.on('start', function (data) {
-        console.log('start', data);
+        // console.log('start', data);
         primus.emit('move', 'south');
       });
 
       primus.on('data', function (data) {
-        console.log(data);
+        // console.log(data);
         primus.write({status: 'ready'});
         primus.write('invalid string!');
       });

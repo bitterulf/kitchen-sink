@@ -56,15 +56,38 @@ server.start(function(err) {
   primus.use('fortress maximus', require('fortress-maximus'));
 
   primus.validate('data', function (msg, next) {
-    if ('object' !== typeof msg) return next(new Error('Invalid'));
-
+    console.log(msg);
     return next();
+    if ('object' !== typeof msg) {
+      return next(new Error('input has to be a object'));
+    }
+
+    // if this is internal another validation makes no sense...
+    if (this.stream) {
+      if (this.name == 'chat') {
+        return next();
+      }
+      else {
+        return next(new Error('invalid internal substream'));
+      }
+    }
+    else if (this.mirage) {
+      if (msg.substream == 'chat') {
+        return next();
+      }
+      else {
+        return next(new Error('invalid substream'));
+      }
+    }
+
+    return next(new Error('input is wrong'));
   });
 
   primus.validate('move', function (msg, next) {
-    console.log('spark', this);
     return next();
   });
+
+  primus.use('substream', require('substream'));
 
   primus.use('emit', require('primus-emit'));
 
@@ -73,7 +96,7 @@ server.start(function(err) {
   primus.use('metroplex', require('metroplex'));
 
   primus.metroplex.servers(function (err, servers) {
-    console.log('registered servers:', servers);
+    // console.log('registered servers:', servers);
   });
 
   primus.on('invalid', function invalid(err, args) {
@@ -83,16 +106,26 @@ server.start(function(err) {
   primus.on('connection', function (spark) {
 
     primus.forward.broadcast('data!', function (err, result) {
-      console.log(result);
+      // console.log(result);
     });
 
+    // substreams do not work with events
+    var chat = spark.substream('chat');
+
+    chat.on('data', function (data) {
+      console.log('chat:', data);
+    });
+
+    chat.write('server question');
+
     spark.write({ action: 'init' });
+
     spark.on('data', function (data) {
-      console.log(data);
+      //console.log('data', data);
     });
 
     spark.on('move', function (target) {
-      console.log(arguments);
+      //console.log(arguments);
     });
 
     spark.emit('start', { foo: 'foo' });
