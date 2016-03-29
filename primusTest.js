@@ -50,9 +50,16 @@ server.start(function(err) {
 
   primus.use('fortress maximus', require('fortress-maximus'));
 
+  primus.use('emit', require('primus-emit'));
+
   primus.validate('data', function (msg, next) {
     if ('object' !== typeof msg) return next(new Error('Invalid'));
 
+    return next();
+  });
+
+  primus.validate('move', function (msg, next) {
+    console.log('spark', this);
     return next();
   });
 
@@ -65,5 +72,11 @@ server.start(function(err) {
     spark.on('data', function (data) {
       console.log(data);
     });
+
+    spark.on('move', function (target) {
+      console.log(arguments);
+    });
+
+    spark.emit('start', { foo: 'foo' });
   });
 });

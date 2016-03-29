@@ -27,6 +27,7 @@
     "mirage": "0.0.5",
     "node-notifier": "^4.5.0",
     "primus": "^5.0.1",
+    "primus-emit": "^1.0.0",
     "seneca": "^1.4.0",
     "shortid": "^2.2.4",
     "ws": "^1.0.1",
