@@ -13,28 +13,33 @@
           var inputField = m.prop('default');
           var items = m.prop([]);
 
-          var reloadItems = function() {
+          var reloadItems = Promise.promisify(function(data, cb) {
             m.startComputation();
             db.allDocs({include_docs: true, descending: true}, function(err, doc) {
               items(doc.rows);
               m.endComputation();
+              cb(null, '');
             })
-          };
+          });
 
-          reloadItems();
+          var createItem = Promise.promisify(function(msg, cb) {
+            db.put({_id: cuid(), msg: msg}, cb);
+          });
+
+          var deleteItem = Promise.promisify(function(id, rev, cb) {
+            db.remove({_id: id, _rev: rev}, cb);
+          });
+
+          reloadItems('');
 
           return {
             inputField: inputField,
             items: items,
             buttonClicked: function() {
-              db.put({_id: cuid(), msg: inputField()}, function callback(err, result) {
-                reloadItems();
-              });
+              createItem(inputField()).then(reloadItems);
             },
             removeItem: function(id, rev) {
-              db.remove({_id: id, _rev: rev}, function(err, result) {
-                reloadItems();
-              });
+              deleteItem(id, rev).then(reloadItems);
             }
           };
         },
