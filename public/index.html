@@ -6,6 +6,7 @@
       var primus = new Primus({});
       primus.on('data', function (data) {
         console.log(data);
+        primus.write({status: 'ready'});
       });
     </script>
   </head>

@@ -40,5 +40,8 @@ server.start(function(err) {
   var primus = new Primus(server.listener, {});
   primus.on('connection', function (spark) {
     spark.write({ action: 'init' });
+    spark.on('data', function (data) {
+      console.log(data);
+    });
   });
 });
