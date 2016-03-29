@@ -6,6 +6,12 @@ var Path = require('path');
 var Hapi = require('hapi');
 var Inert = require('inert');
 
+var seneca = require('seneca')();
+
+seneca.use('redis-store', {});
+
+var userCollection = seneca.make('user');
+
 var server = new Hapi.Server({
     connections: {
         routes: {
@@ -48,10 +54,12 @@ server.start(function(err) {
   });
 
   primus.use('mirage', require('mirage'));
-  // primus.id.generator(function generate(spark, fn) {
-  //   console.log('mirage!');
-  //   fn(undefined, 'boink');
-  // });
+  primus.id.generator(function generate(spark, fn) {
+    userCollection.save$(function(err, doc) {
+      if (err) return fn(err);
+      fn(null, doc.id);
+    });
+  });
 
   primus.use('fortress maximus', require('fortress-maximus'));
 

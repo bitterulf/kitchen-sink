@@ -32,6 +32,7 @@
     "primus": "^5.0.1",
     "primus-emit": "^1.0.0",
     "seneca": "^1.4.0",
+    "seneca-redis-store": "0.0.8",
     "shortid": "^2.2.4",
     "substream": "^0.2.0",
     "ws": "^1.0.1",
