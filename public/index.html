@@ -3,7 +3,15 @@
     <title>prime</title>
     <script src="/primus/primus.js"></script>
     <script>
-      var primus = new Primus({});
+
+      var primus = new Primus({
+        mirage: 'foo'
+      });
+
+      primus.on('mirage', function (id) {
+        console.log('got id:', id);
+      });
+
       primus.on('data', function (data) {
         console.log(data);
         primus.write({status: 'ready'});

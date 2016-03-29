@@ -38,7 +38,14 @@ server.start(function(err) {
   console.log('Server running at:', server.info.uri);
 
   var primus = new Primus(server.listener, {
-    fortress: 'spark'
+    fortress: 'spark',
+    'mirage timeout': 5000
+  });
+
+  primus.use('mirage', require('mirage'));
+  primus.id.generator(function generate(spark, fn) {
+    console.log('mirage!');
+    fn(undefined, 'boink');
   });
 
   primus.use('fortress maximus', require('fortress-maximus'));
